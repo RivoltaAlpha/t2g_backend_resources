@@ -1,0 +1,17 @@
+@url = http://localhost:8000
+
+###
+GET {{url}}
+
+###
+GET {{url}}/api
+
+###
+GET {{url}}/users
+
+###
+GET {{url}}/todos
+
+###
+GET {{url}}/comments
+
