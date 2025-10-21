@@ -1,98 +1,384 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Core Concepts for Car Rental Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![alt text](image-1.png)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 1. Controllers
 
-## Description
+**Purpose**: Handle incoming HTTP requests and return responses to the client.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+**Key Features**:
 
-## Project setup
+- Define routes using decorators (`@Get()`, `@Post()`, `@Put()`, `@Delete()`)
+- Handle request data (params, query, body)
+- Delegate business logic to services
 
-```bash
-$ pnpm install
+![alt text](image.png)
+
+**Example - Car Controller**:
+
+```typescript
+// src/car/car.controller.ts
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { CarService } from './car.service';
+import { CreateCarDto } from './dto/create-car.dto';
+
+@Controller('cars')
+export class CarController {
+  constructor(private readonly carService: CarService) {}
+
+  @Post()
+  create(@Body() createCarDto: CreateCarDto) {
+    return this.carService.create(createCarDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.carService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.carService.findOne(id);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateCarDto: any) {
+    return this.carService.update(id, updateCarDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.carService.remove(id);
+  }
+}
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ pnpm run start
+## 2. Providers (Services)
+**Purpose**: Contain business logic and can be injected as dependencies.
 
-# watch mode
-$ pnpm run start:dev
+**Key Features**:
+- Marked with `@Injectable()` decorator
+- Handle database operations, calculations, external API calls
+- Can be injected into controllers or other providers
+- Promote code reusability and separation of concerns
 
-# production mode
-$ pnpm run start:prod
+**Example - Car Service**:
+```typescript
+// src/car/car.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateCarDto } from './dto/create-car.dto';
+
+@Injectable()
+export class CarService {
+  private cars = [];
+
+  create(createCarDto: CreateCarDto) {
+    const car = {
+      id: Date.now().toString(),
+      ...createCarDto,
+      availability: true,
+    };
+    this.cars.push(car);
+    return car;
+  }
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOne(id: string) {
+    const car = this.cars.find(car => car.id === id);
+    if (!car) {
+      throw new NotFoundException(`Car with ID ${id} not found`);
+    }
+    return car;
+  }
+
+  update(id: string, updateCarDto: any) {
+    const carIndex = this.cars.findIndex(car => car.id === id);
+    if (carIndex === -1) {
+      throw new NotFoundException(`Car with ID ${id} not found`);
+    }
+    this.cars[carIndex] = { ...this.cars[carIndex], ...updateCarDto };
+    return this.cars[carIndex];
+  }
+
+  remove(id: string) {
+    const carIndex = this.cars.findIndex(car => car.id === id);
+    if (carIndex === -1) {
+      throw new NotFoundException(`Car with ID ${id} not found`);
+    }
+    this.cars.splice(carIndex, 1);
+    return { deleted: true };
+  }
+}
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ pnpm run test
+## 3. Modules
+**Purpose**: Organize application structure by grouping related components.
 
-# e2e tests
-$ pnpm run test:e2e
+**Key Features**:
+- Marked with `@Module()` decorator
+- Define controllers, providers, imports, and exports
+- Create a modular, maintainable architecture
+- Enable feature encapsulation
 
-# test coverage
-$ pnpm run test:cov
+**Example - Car Module**:
+```typescript
+// src/car/car.module.ts
+import { Module } from '@nestjs/common';
+import { CarController } from './car.controller';
+import { CarService } from './car.service';
+
+@Module({
+  controllers: [CarController],
+  providers: [CarService],
+  exports: [CarService], // Export if other modules need it
+})
+export class CarModule {}
 ```
 
-## Deployment
+**App Module (Root)**:
+```typescript
+// src/app.module.ts
+import { Module } from '@nestjs/common';
+import { CarModule } from './car/car.module';
+import { CustomerModule } from './customer/customer.module';
+import { RentalModule } from './rental/rental.module';
+import { PaymentModule } from './payment/payment.module';
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+@Module({
+  imports: [
+    CarModule,
+    CustomerModule,
+    RentalModule,
+    PaymentModule,
+  ],
+})
+export class AppModule {}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 4. Dependency Injection (DI)
+**Purpose**: Manage dependencies automatically, promoting loose coupling.
 
-Check out a few resources that may come in handy when working with NestJS:
+**How it Works**:
+1. Mark classes with `@Injectable()`
+2. Register providers in module
+3. Inject via constructor
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+**Example**:
+```typescript
+// Rental service depends on Car service
+@Injectable()
+export class RentalService {
+  constructor(
+    private readonly carService: CarService,
+    private readonly customerService: CustomerService,
+  ) {}
 
-## Support
+  async createRental(createRentalDto: CreateRentalDto) {
+    // Use injected services
+    const car = await this.carService.findOne(createRentalDto.carId);
+    const customer = await this.customerService.findOne(createRentalDto.customerId);
+    
+    // Business logic here
+    return { rental: 'created', car, customer };
+  }
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Module Configuration**:
+```typescript
+@Module({
+  imports: [CarModule, CustomerModule], // Import modules with services you need
+  controllers: [RentalController],
+  providers: [RentalService],
+})
+export class RentalModule {}
+```
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 5. Middleware
+**Purpose**: Execute code before route handlers, can modify request/response.
 
-## License
+**Use Cases**:
+- Logging
+- Authentication
+- CORS handling
+- Request validation
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+**Example - Logger Middleware**:
+```typescript
+// src/common/middleware/logger.middleware.ts
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+  }
+}
+```
+
+**Apply Middleware**:
+```typescript
+// src/app.module.ts
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+
+@Module({
+  // ... imports
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('*'); // Apply to all routes
+  }
+}
+```
+
+---
+
+## 6. DTOs (Data Transfer Objects)
+**Purpose**: Define the shape of data for requests and responses.
+
+**Example**:
+```typescript
+// src/car/dto/create-car.dto.ts
+export class CreateCarDto {
+  carModel: string;
+  manufacturer: string;
+  year: number;
+  color: string;
+  rentalRate: number;
+}
+
+// src/rental/dto/create-rental.dto.ts
+export class CreateRentalDto {
+  carId: string;
+  customerId: string;
+  rentalStartDate: Date;
+  rentalEndDate: Date;
+}
+```
+
+---
+
+## Complete Project Structure for Car Rental System
+
+```
+car-rental-system/
+├── src/
+│   ├── car/
+│   │   ├── car.controller.ts
+│   │   ├── car.service.ts
+│   │   ├── car.module.ts
+│   │   └── dto/
+│   │       ├── create-car.dto.ts
+│   │       └── update-car.dto.ts
+│   │
+│   ├── customer/
+│   │   ├── customer.controller.ts
+│   │   ├── customer.service.ts
+│   │   ├── customer.module.ts
+│   │   └── dto/
+│   │
+│   ├── rental/
+│   │   ├── rental.controller.ts
+│   │   ├── rental.service.ts
+│   │   ├── rental.module.ts
+│   │   └── dto/
+│   │
+│   ├── payment/
+│   │   ├── payment.controller.ts
+│   │   ├── payment.service.ts
+│   │   ├── payment.module.ts
+│   │   └── dto/
+│   │
+│   ├── insurance/
+│   │   ├── insurance.controller.ts
+│   │   ├── insurance.service.ts
+│   │   ├── insurance.module.ts
+│   │   └── dto/
+│   │
+│   ├── location/
+│   │   ├── location.controller.ts
+│   │   ├── location.service.ts
+│   │   ├── location.module.ts
+│   │   └── dto/
+│   │
+│   ├── reservation/
+│   │   ├── reservation.controller.ts
+│   │   ├── reservation.service.ts
+│   │   ├── reservation.module.ts
+│   │   └── dto/
+│   │
+│   ├── maintenance/
+│   │   ├── maintenance.controller.ts
+│   │   ├── maintenance.service.ts
+│   │   ├── maintenance.module.ts
+│   │   └── dto/
+│   │
+│   ├── common/
+│   │   └── middleware/
+│   │       └── logger.middleware.ts
+│   │
+│   ├── app.module.ts
+│   └── main.ts
+│
+└── package.json
+```
+
+---
+
+## Generating Resources with NestJS CLI
+
+```bash
+# Generate all resources for your system
+nest generate resource car --no-spec
+nest generate resource customer --no-spec
+nest generate resource rental --no-spec
+nest generate resource payment --no-spec
+nest generate resource insurance --no-spec
+nest generate resource location --no-spec
+nest generate resource reservation --no-spec
+nest generate resource maintenance --no-spec
+```
+
+This command automatically creates:
+- Controller
+- Service
+- Module
+- DTO files
+- Updates app.module.ts
+
+---
+
+## Request Flow Summary
+
+1. **HTTP Request** → Hits endpoint (e.g., `POST /cars`)
+2. **Middleware** → Executes pre-processing (logging, auth)
+3. **Controller** → Receives request, extracts data
+4. **Service** → Performs business logic, database operations
+5. **Response** → Returns to client via controller
+
+---
+
+## Key Benefits of NestJS Architecture
+
+- **Modularity**: Each feature is self-contained
+- **Testability**: Easy to mock services and test in isolation
+- **Scalability**: Add features without affecting existing code
+- **Maintainability**: Clear separation of concerns
+- **Type Safety**: Full TypeScript support
+- **Dependency Injection**: Automatic dependency management

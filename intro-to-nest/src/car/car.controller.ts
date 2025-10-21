@@ -19,7 +19,7 @@ export class CarController {
 
   @Get('/car/:id')
   findOne(@Param('id') id: string) {
-    return this.carService.findOne(+id);
+    return this.carService.findOne(id);
   }
 
   @Patch('/update/:id')
