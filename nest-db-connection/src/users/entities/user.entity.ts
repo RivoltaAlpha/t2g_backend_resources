@@ -3,7 +3,6 @@ import { Feedback } from "../../feedback/entities/feedback.entity";
 import { Registration } from "../../registrations/entities/registration.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn } from "typeorm";
 
-
 export enum UserRole{
     Admin = 'Admin',
     User = 'user',
@@ -29,7 +28,7 @@ export class User {
     phone:string;
 
     @Column({type: 'varchar', length: 255, nullable: false})
-    hashedRefreshedToken?: string|null; 
+    hashedRefreshedToken?: string | null; 
 
     @Column({
         type: 'varchar',

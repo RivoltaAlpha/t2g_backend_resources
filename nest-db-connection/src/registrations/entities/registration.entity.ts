@@ -1,7 +1,7 @@
 import { Event } from "../../events/entities/event.entity";
 import { Payment } from "../../payments/entities/payment.entity";
 import { User } from "../../users/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne, CreateDateColumn } from "typeorm";
 
 
 export enum PaymentStatus {
