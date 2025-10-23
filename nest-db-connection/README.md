@@ -397,14 +397,14 @@ USE [nest-conn]
 GO
 
 -- Create login if it doesn't exist
-CREATE LOGIN [Tifany Nyawira] WITH PASSWORD = 'PASSWORD'
+CREATE LOGIN [Tiff] WITH PASSWORD = 'PASSWORD'
 GO
 
 -- Create database user and assign permissions
-CREATE USER [Tifany Nyawira] FOR LOGIN [Tifany Nyawira]
+CREATE USER [Tiff] FOR LOGIN [Tiff]
 GO
 
-ALTER ROLE db_owner ADD MEMBER [Tifany Nyawira]
+ALTER ROLE db_owner ADD MEMBER [Tiff]
 GO
 ```
 
@@ -511,7 +511,6 @@ Before running migrations, ensure:
 - All your entities are properly defined and imported in your application
 
 ---
-
 
 ## Migration Commands Reference
 
