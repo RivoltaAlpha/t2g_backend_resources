@@ -10,12 +10,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly logger: LoggerService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -38,15 +40,17 @@ export class UsersService {
         hashedRefreshedToken: ""
       });
 
-      const savedUser = await this.userRepository.save(user);
+     const savedUser: any = await this.userRepository.save(user);
+     this.logger.log('This is a log of the user being created', savedUser)
+
       return savedUser;
     } catch (error) {
       if (error instanceof ConflictException) {
         throw error;
       }
       throw new Error(`Failed to create user: ${error.message}`);
-    }
-  }
+    } 
+  }  
 
   async findAll() {
     try {

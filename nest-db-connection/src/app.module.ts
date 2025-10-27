@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { databaseConfig } from './database/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { User } from './users/entities/user.entity';
     PaymentsModule,
     FeedbackModule,
     DatabaseModule,
+    LoggerModule
   ],
   controllers: [AppController],
   providers: [AppService],

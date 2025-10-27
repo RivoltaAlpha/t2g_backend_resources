@@ -27,7 +27,7 @@ export class User {
     @Column({type: 'varchar', length: 255, nullable: false})
     phone:string;
 
-    @Column({type: 'varchar', length: 255, nullable: false})
+    @Column({type: 'varchar', length: 255})
     hashedRefreshedToken?: string | null; 
 
     @Column({
