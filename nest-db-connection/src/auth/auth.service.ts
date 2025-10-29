@@ -16,8 +16,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  private async getTokens(userId: number, email: string, role: string) {}
-
   private async hashData(data: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(data, salt);
