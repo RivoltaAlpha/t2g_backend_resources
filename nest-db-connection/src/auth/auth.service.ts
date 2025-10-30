@@ -4,7 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CreateAuthDto } from './dto/signup.dto';
+import { LoginDto } from "./dto/signin.dto";
 import * as bcrypt from 'bcrypt'
 
 @Injectable()
@@ -106,9 +107,9 @@ async SignOut (userId: number) {
     return `user with id ${userId} signed out`
 }
 
-async SignIn (createAuthDto: CreateAuthDto) {
+async SignIn (loginDto: LoginDto) {
     const foundUser = await this.userRepository.findOne({
-        where: {email: createAuthDto.email},
+        where: {email: loginDto.email},
         select: ['email' ,'user_id', 'role', 'password']
     })
 
@@ -117,7 +118,7 @@ async SignIn (createAuthDto: CreateAuthDto) {
     };
 
     const foundPassword = await bcrypt.compare(
-        createAuthDto.password,
+        loginDto.password,
         foundUser.password,
     );
 

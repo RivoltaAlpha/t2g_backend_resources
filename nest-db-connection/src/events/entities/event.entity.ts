@@ -8,16 +8,16 @@ export class Event {
     @PrimaryGeneratedColumn()
     event_id: number;
 
-    @Column({type: 'varchar', length: 255, nullable: false})
+    @Column({type: 'nvarchar', length: 255})
     event_name: string;
     
-    @Column({type: 'varchar', length: 255, nullable: false})
-    event_date:string;
+    @Column({type: 'datetime2'})
+    event_date:Date;
 
-    @Column({type: 'varchar', length: 255, nullable: false})
+    @Column({type: 'nvarchar', length: 255})
     event_location: string;
 
-    @Column({type: 'text'})
+    @Column({type: 'nvarchar', length: 255})
     event_description:string;
     
     @CreateDateColumn({type: 'datetime2'})
@@ -35,5 +35,5 @@ export class Event {
 
     @ManyToOne(() => User, (user) => user.event)
     @JoinColumn({name: 'created_by'})
-    user: User;
+    created_by: User;
 }

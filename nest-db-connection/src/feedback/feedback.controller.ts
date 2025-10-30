@@ -2,8 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FeedbackService } from './feedback.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('feedback')
+@ApiBearerAuth('access-token')// endpoints require Authentication
+@ApiTags('Feedback')
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 

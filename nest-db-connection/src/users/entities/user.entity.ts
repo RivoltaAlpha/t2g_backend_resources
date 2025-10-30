@@ -49,6 +49,6 @@ export class User {
     @OneToMany(() => Registration, (registration) => registration.user)
     registration: Registration;
 
-    @OneToMany(() => Event, (event) => event.user)
+    @OneToMany(() => Event, (event) => event.created_by)
     event: Event;
 }

@@ -44,7 +44,6 @@ export class Payment {
     updated_at: Date;
 
     // registrations relationships
-    
     @OneToOne(() => Registration, (registration) => registration.payment)
     @JoinColumn({name: 'registration_id'})
     registration: Registration

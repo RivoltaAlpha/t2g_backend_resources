@@ -2,8 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('registrations')
+@ApiBearerAuth('access-token')// endpoints require Authentication
+@ApiTags('Registrations')
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService) {}
 

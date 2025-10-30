@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/public.decorator";
-import { CreateAuthDto } from "./dto/create-auth.dto";
+import { CreateAuthDto } from "./dto/signup.dto";
+import { LoginDto } from "./dto/signin.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -17,8 +18,8 @@ create(@Body() createAuthDto: CreateAuthDto){
 
 @Public()
 @Post('signin')
-findOne(@Body() createAuthDto: CreateAuthDto){
-    return this.authService.SignIn(createAuthDto)
+findOne(@Body() loginDto: LoginDto){
+    return this.authService.SignIn(loginDto)
 }
 
 }

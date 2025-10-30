@@ -2,8 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('events')
+@ApiBearerAuth('access-token')// endpoints require Authentication
+@ApiTags('Events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 

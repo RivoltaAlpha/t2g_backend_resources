@@ -5,8 +5,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { UserRole } from './entities/user.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiBearerAuth('access-token')// endpoints require Authentication
+@ApiTags('Users') // grouping 
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
