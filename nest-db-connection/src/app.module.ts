@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './auth/guards/access-token.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { RolesGuard } from './auth/guards/roles.guard';
     FeedbackModule,
     DatabaseModule,
     LoggerModule,
-    AuthModule
+    AuthModule,
+    SeedModule
   ],
   controllers: [AppController],
   providers: [AppService,
